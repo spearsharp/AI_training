@@ -1,0 +1,98 @@
+# GPT-2 Text Generation Configuration
+
+model:
+  name: "gpt2"
+  type: "generation"
+  max_length: 1024
+  pretrained: true
+  
+  # Generation parameters
+  generation:
+    max_new_tokens: 50
+    temperature: 0.8
+    top_k: 50
+    top_p: 0.9
+    do_sample: true
+    pad_token_id: 50256
+    eos_token_id: 50256
+  
+  # LoRA configuration
+  use_lora: true
+  lora_config:
+    r: 8
+    lora_alpha: 16
+    lora_dropout: 0.1
+    target_modules: ["c_attn", "c_proj"]
+
+data:
+  dataset_name: "wikitext"
+  dataset_config: "wikitext-2-raw-v1"
+  text_column: "text"
+  max_length: 1024
+  train_split: "train"
+  validation_split: "validation"
+  test_split: "test"
+  preprocessing:
+    add_bos_token: true
+    add_eos_token: true
+  cache_dir: "./cache"
+  num_workers: 4
+
+training:
+  num_epochs: 3
+  batch_size: 4
+  eval_batch_size: 8
+  learning_rate: 5e-5
+  weight_decay: 0.01
+  warmup_steps: 1000
+  max_grad_norm: 1.0
+  
+  gradient_accumulation_steps: 4
+  mixed_precision: "fp16"
+  seed: 42
+  
+  scheduler:
+    type: "cosine"
+    num_warmup_steps: 1000
+  
+  optimizer:
+    type: "adamw"
+    lr: 5e-5
+    betas: [0.9, 0.95]
+    eps: 1e-8
+    weight_decay: 0.01
+  
+  early_stopping:
+    patience: 5
+    min_delta: 0.01
+    metric: "eval_loss"
+    mode: "min"
+  
+  save_steps: 2000
+  eval_steps: 1000
+  logging_steps: 200
+  save_total_limit: 2
+  output_dir: "./checkpoints/gpt2-generation"
+  
+  evaluation_strategy: "steps"
+  save_strategy: "steps"
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_perplexity"
+  greater_is_better: false
+
+logging:
+  log_level: "INFO"
+  log_file: "./logs/gpt2_training.log"
+  tracker: "wandb"
+  project_name: "transformers-fine-tuning"
+  experiment_name: "gpt2-generation-experiment"
+
+hardware:
+  device: "auto"
+  num_gpus: 1
+  distributed: false
+  dataloader_num_workers: 4
+  pin_memory: true
+
+evaluation:
+  metrics: ["perplexity", "bleu"]

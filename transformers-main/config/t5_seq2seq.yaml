@@ -1,0 +1,99 @@
+# T5 Sequence-to-Sequence Configuration
+
+model:
+  name: "t5-small"
+  type: "seq2seq"
+  max_input_length: 512
+  max_target_length: 128
+  pretrained: true
+  
+  # T5-specific parameters
+  decoder_start_token_id: 0
+  pad_token_id: 0
+  eos_token_id: 1
+  
+  # LoRA configuration
+  use_lora: true
+  lora_config:
+    r: 16
+    lora_alpha: 32
+    lora_dropout: 0.1
+    target_modules: ["q", "v", "k", "o", "wi", "wo"]
+
+data:
+  dataset_name: "squad"
+  input_column: "context"
+  target_column: "question"
+  max_input_length: 512
+  max_target_length: 128
+  train_split: "train"
+  validation_split: "validation[:10%]"
+  test_split: "validation[10%:]"
+  
+  # Task-specific preprocessing
+  prefix: "generate question: "
+  preprocessing:
+    lowercase: false
+    add_prefix: true
+  
+  cache_dir: "./cache"
+  num_workers: 4
+
+training:
+  num_epochs: 5
+  batch_size: 8
+  eval_batch_size: 16
+  learning_rate: 3e-4
+  weight_decay: 0.01
+  warmup_steps: 1000
+  max_grad_norm: 1.0
+  
+  gradient_accumulation_steps: 2
+  mixed_precision: "fp16"
+  seed: 42
+  
+  scheduler:
+    type: "linear"
+    num_warmup_steps: 1000
+  
+  optimizer:
+    type: "adafactor"  # T5 works well with Adafactor
+    lr: 3e-4
+    scale_parameter: false
+    relative_step_size: false
+  
+  early_stopping:
+    patience: 3
+    min_delta: 0.001
+    metric: "eval_loss"
+    mode: "min"
+  
+  save_steps: 1500
+  eval_steps: 750
+  logging_steps: 150
+  save_total_limit: 3
+  output_dir: "./checkpoints/t5-seq2seq"
+  
+  evaluation_strategy: "steps"
+  save_strategy: "steps"
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_rouge_l"
+  greater_is_better: true
+
+logging:
+  log_level: "INFO"
+  log_file: "./logs/t5_training.log"
+  tracker: "wandb"
+  project_name: "transformers-fine-tuning"
+  experiment_name: "t5-seq2seq-experiment"
+
+hardware:
+  device: "auto"
+  num_gpus: 1
+  distributed: false
+  dataloader_num_workers: 4
+  pin_memory: true
+
+evaluation:
+  metrics: ["rouge", "bleu", "meteor"]
+  rouge_types: ["rouge1", "rouge2", "rougeL"]

@@ -1,0 +1,120 @@
+# BERT Text Classification Configuration
+
+model:
+  name: "bert-base-uncased"
+  type: "classification"
+  num_classes: 2
+  dropout: 0.1
+  hidden_size: 768
+  pretrained: true
+  
+  # LoRA configuration for efficient fine-tuning
+  use_lora: false
+  lora_config:
+    r: 16
+    lora_alpha: 32
+    lora_dropout: 0.1
+    target_modules: ["query", "value"]
+
+data:
+  dataset_name: "imdb"  # or path to custom dataset
+  text_column: "text"
+  label_column: "label"
+  max_length: 512
+  train_split: "train"
+  validation_split: "test[:10%]"
+  test_split: "test[10%:]"
+  preprocessing:
+    lowercase: true
+    remove_html: true
+    remove_urls: true
+  cache_dir: "./cache"
+  num_workers: 4
+
+training:
+  # Basic training parameters
+  num_epochs: 3
+  batch_size: 16
+  eval_batch_size: 32
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  
+  # Advanced training settings
+  gradient_accumulation_steps: 1
+  mixed_precision: "fp16"  # fp16, bf16, or None
+  seed: 42
+  
+  # Scheduler configuration
+  scheduler:
+    type: "linear"  # linear, cosine, polynomial
+    num_warmup_steps: 500
+  
+  # Optimizer configuration
+  optimizer:
+    type: "adamw"
+    lr: 2e-5
+    betas: [0.9, 0.999]
+    eps: 1e-8
+    weight_decay: 0.01
+  
+  # Early stopping
+  early_stopping:
+    patience: 3
+    min_delta: 0.001
+    metric: "eval_loss"
+    mode: "min"
+  
+  # Checkpointing
+  save_steps: 1000
+  eval_steps: 500
+  logging_steps: 100
+  save_total_limit: 3
+  output_dir: "./checkpoints/bert-classification"
+  
+  # Evaluation strategy
+  evaluation_strategy: "steps"
+  save_strategy: "steps"
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_f1"
+  greater_is_better: true
+
+# Logging configuration
+logging:
+  log_level: "INFO"
+  log_file: "./logs/training.log"
+  tracker: "wandb"  # wandb, tensorboard, or none
+  project_name: "transformers-fine-tuning"
+  experiment_name: "bert-classification-experiment"
+
+# Hardware configuration
+hardware:
+  device: "auto"  # auto, cpu, cuda, mps
+  num_gpus: 1
+  distributed: false
+  dataloader_num_workers: 4
+  pin_memory: true
+
+# Evaluation metrics
+evaluation:
+  metrics: ["accuracy", "precision", "recall", "f1"]
+  average: "weighted"  # micro, macro, weighted
+  
+# Hyperparameter optimization (optional)
+hyperparameter_optimization:
+  enabled: false
+  method: "optuna"  # optuna, wandb
+  n_trials: 50
+  search_space:
+    learning_rate:
+      type: "loguniform"
+      low: 1e-6
+      high: 1e-3
+    batch_size:
+      type: "categorical"
+      choices: [8, 16, 32]
+    warmup_steps:
+      type: "uniform"
+      low: 100
+      high: 1000
