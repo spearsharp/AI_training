@@ -92,7 +92,7 @@ class SimpleRNN:
 
 
 # Toy dataset: predict next value of sine sequence
-def generate_sine_sequences(num_seqs=1000, seq_len=20, noise=0.0):
+def generate_sine_sequences(num_seqs=1000, seq_len=10, noise=0.0):
     X = []
     Y = []
     for _ in range(num_seqs):
