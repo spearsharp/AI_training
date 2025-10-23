@@ -38,11 +38,11 @@ for j in range(60000):
     if (j% 10000) == 0:
         print("Error:" + str(np.mean(np.abs(l2_error))))
 
-    l2_delta = l2_error * nonlin(l2,deriv=True)
+    l2_delta = l2_error * nonlin(l2,deriv=True) # propagate errors back to the previous layer
 
-    l1_error = l2_delta.dot(w1.T)
+    l1_error = l2_delta.dot(w1.T) # errors propagated to the hidden layer
 
-    l1_delta = l1_error * nonlin(l1,deriv=True)
+    l1_delta = l1_error * nonlin(l1,deriv=True) # multiply how much we missed by the
 
     w1 += l1.T.dot(l2_delta)
     w0 += l0.T.dot(l1_delta)

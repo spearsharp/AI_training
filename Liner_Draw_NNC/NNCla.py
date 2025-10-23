@@ -7,7 +7,7 @@ D = 2 # dimensionality
 K = 3 # number of classes
 X = np.zeros((N*K,D))
 y = np.zeros(N*K, dtype='uint8')
-for j in xrange(K):
+for j in range(K):
   ix = range(N*j,N*(j+1))
   r = np.linspace(0.0,1,N) # radius
   t = np.linspace(j*4,(j+1)*4,N) + np.random.randn(N)*0.2 # theta
@@ -26,7 +26,7 @@ reg = 1e-3 # regularization strength
 
 # gradient descent loop
 num_examples = X.shape[0]
-for i in xrange(2000):
+for i in range(2000):
   
   # evaluate class scores, [N x K]
   hidden_layer = np.maximum(0, np.dot(X, W) + b) # note, ReLU activation hidden_layer:300*100
@@ -44,11 +44,11 @@ for i in xrange(2000):
   reg_loss = 0.5*reg*np.sum(W*W) + 0.5*reg*np.sum(W2*W2)
   loss = data_loss + reg_loss
   if i % 100 == 0:
-    print "iteration %d: loss %f" % (i, loss)
+    print("iteration %d: loss %f" % (i, loss))
   
   # compute the gradient on scores
   dscores = probs
-  dscores[range(num_examples),y] -= 1
+  dscores[np.arange(num_examples), y] -= 1
   dscores /= num_examples
   
   # backpropate the gradient to the parameters
@@ -75,7 +75,7 @@ for i in xrange(2000):
 hidden_layer = np.maximum(0, np.dot(X, W) + b)
 scores = np.dot(hidden_layer, W2) + b2
 predicted_class = np.argmax(scores, axis=1)
-print 'training accuracy: %.2f' % (np.mean(predicted_class == y))
+print("training accuracy: %.2f" % (np.mean(predicted_class == y)))
 
 
 h = 0.02

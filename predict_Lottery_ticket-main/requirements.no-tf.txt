@@ -1,0 +1,22 @@
+beautifulsoup4==4.12.3
+black==24.4.2
+build==0.10.0
+matplotlib==3.9.0
+numpy==1.24.3
+pandas==2.2.2
+pyyaml==6.0.1
+python-dotenv==1.0.1
+pytest==8.2.2
+pytest-cov==5.0.0
+requests==2.32.3
+responses==0.25.0
+ruff==0.5.6
+scikit-learn==1.5.1
+keras==2.15.0
+tqdm==4.66.4
+loguru==0.7.2
+
+# Note: tensorflow and tensorflow-intel are intentionally omitted from this file.
+# Install them manually after creating the environment to ensure you pick the
+# correct build for your platform (e.g. tensorflow-intel for x86_64 macOS,
+# or tensorflow-macos + tensorflow-metal for Apple Silicon).

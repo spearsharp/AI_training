@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prediction: ssq 2025-10-21 11:23:11</title>
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; padding: 24px; }
+    pre { background:#f6f8fa; padding:16px; border-radius:8px; overflow:auto; }
+    .meta { margin-bottom:12px; }
+    button { margin-right:8px; }
+
+    /* Ball styles */
+    #pretty { margin-top: 18px; }
+    .ball {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(16,24,40,0.12), inset 0 -6px 12px rgba(255,255,255,0.06);
+      font-size: 20px;
+      user-select: none;
+    }
+    .ball.red { background: linear-gradient(180deg, #ff5a5a 0%, #d93025 100%); }
+    .ball.blue { background: linear-gradient(180deg, #5aa8ff 0%, #1e88e5 100%); }
+
+    /* Responsive layout */
+    @media (max-width: 480px) {
+      .ball { width: 48px; height: 48px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Prediction file: prediction_20251021-112311.json</h1>
+  <div class="meta">
+    <strong>Path:</strong> predict/ssq/prediction_20251021-112311.json<br/>
+    <strong>Generated:</strong> 2025-10-21 11:23:11 (timestamp field)
+  </div>
+
+  <div>
+    <button id="copyBtn">Copy JSON</button>
+    <a id="downloadLink" download="prediction_20251021-112311.json">Download JSON</a>
+  </div>
+
+  <h2>Content</h2>
+  <div id="pretty" aria-live="polite"></div>
+  <pre id="jsonPre" style="display:none"></pre>
+
+  <script>
+    // Embedded JSON (inlined to avoid CORS / server requirements)
+    const data = {
+      "code": "ssq",
+      "timestamp": "20251021-112311",
+      "prediction": {
+        "red": [5, 9, 17, 16, 26, 31],
+        "blue": [2]
+      }
+    };
+
+    const pre = document.getElementById('jsonPre');
+    pre.textContent = JSON.stringify(data, null, 2);
+
+    // Pretty display: show the 6 red balls and 1 blue ball
+    const pretty = document.getElementById('pretty');
+    function renderBalls(obj) {
+      const wrapper = document.createElement('div');
+      wrapper.style.display = 'flex';
+      wrapper.style.gap = '12px';
+      wrapper.style.alignItems = 'center';
+
+      const redContainer = document.createElement('div');
+      redContainer.style.display = 'flex';
+      redContainer.style.gap = '10px';
+      redContainer.style.alignItems = 'center';
+
+      obj.prediction.red.forEach((n) => {
+        const ball = document.createElement('div');
+        ball.className = 'ball red';
+        ball.textContent = String(n).padStart(2, '0');
+        ball.setAttribute('role', 'img');
+        ball.setAttribute('aria-label', `Red ball ${n}`);
+        redContainer.appendChild(ball);
+      });
+
+      const plus = document.createElement('div');
+      plus.textContent = '+';
+      plus.style.fontSize = '28px';
+      plus.style.margin = '0 8px';
+      plus.style.color = '#333';
+
+      const blueContainer = document.createElement('div');
+      blueContainer.style.display = 'flex';
+      blueContainer.style.gap = '10px';
+
+      obj.prediction.blue.forEach((n) => {
+        const ball = document.createElement('div');
+        ball.className = 'ball blue';
+        ball.textContent = String(n).padStart(2, '0');
+        ball.setAttribute('role', 'img');
+        ball.setAttribute('aria-label', `Blue ball ${n}`);
+        blueContainer.appendChild(ball);
+      });
+
+      wrapper.appendChild(redContainer);
+      wrapper.appendChild(plus);
+      wrapper.appendChild(blueContainer);
+      return wrapper;
+    }
+
+    pretty.appendChild(renderBalls(data));
+
+    // Copy button copies the pretty numbers as a one-line string and the full JSON
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const oneLine = `${data.prediction.red.join(' ')} + ${data.prediction.blue.join(' ')}`;
+      const payload = `Pretty: ${oneLine}\n\nJSON:\n${JSON.stringify(data, null, 2)}`;
+      try {
+        await navigator.clipboard.writeText(payload);
+        alert('Prediction copied to clipboard');
+      } catch (err) {
+        alert('Copy failed: ' + err);
+      }
+    });
+
+    // Download link
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.getElementById('downloadLink');
+    a.href = url;
+  </script>
+</body>
+</html>
